@@ -21,7 +21,7 @@ void repair(sfRenderWindow* window, sfEvent event)
 static void if_click(sfRenderWindow* window, sfEvent event)
 {
     int i = 0;
-    sfVector2i mouse = sfMouse_getPosition(window);
+    sfVector2i mouse = sfMouse_getPositionRenderWindow(window);
 
     if (mouse.x >= 816 && mouse.x <= 1062) {
         if (mouse.y >= 526 && mouse.y <= 594)
@@ -29,7 +29,6 @@ static void if_click(sfRenderWindow* window, sfEvent event)
     }
     if (event.type == sfEvtMouseButtonPressed) {
         printf("x:,%d y: %d, button: %d\n", event.mouseButton.x, event.mouseButton.y, event.mouseButton.button);
-       return (0);
     }
 }
 
@@ -123,7 +122,7 @@ PaintState paint_handle_event(PaintState state, PaintContext* context,sfEvent ev
 //     }
 // }
 
-int fenetre()
+void fenetre()
 {
     sfEvent event;
     sfRenderWindow *window;

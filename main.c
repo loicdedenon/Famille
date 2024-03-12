@@ -5,6 +5,8 @@
 ** main
 */
 
+void fenetre(void);
+
 int main(void)
 {
     fenetre();
