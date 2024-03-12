@@ -78,7 +78,14 @@ PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event)
         return PAINT_STATE_IDLE; 
     }
     if_click(window,event);
-    //sfRenderWindow_drawRectangleShape();
+    sfRectangleShape *object = sfRectangleShape_create();
+    sfVector2f position = {560, 580}; 
+    sfRectangleShape_setPosition(object, position);
+    sfRectangleShape_setSize(object, position);
+    sfRectangleShape_setFillColor(object,sfBlue);
+    sfRenderWindow_drawRectangleShape(window, object, NULL);
+    sfRenderWindow_display(window);
+    sfRectangleShape_destroy(object);
     return PAINT_STATE_DRAW_RECTANGLE;
 }
 
