@@ -61,7 +61,7 @@ void paint_context_destroy(PaintContext* self) {
     }
 }
 
-PaintState paint_handle_event_on_idle(PaiwntContext* context,sfEvent event) {
+PaintState paint_handle_event_on_idle(PaintContext* context,sfEvent event) {
     return PAINT_STATE_DRAW_RECTANGLE;
 }
 
@@ -124,7 +124,7 @@ int fenetre()
     sfSprite_setScale(sprite, scale);
 
     PaintState paint_state = PAINT_STATE_IDLE;
-    PaintContext paint_context =  paint_context_create(window);
+    PaintContext *paint_context =  paint_context_create(window);
 
     while (sfRenderWindow_isOpen(window)) {
         sfRenderWindow_drawSprite(window, sprite, NULL);
