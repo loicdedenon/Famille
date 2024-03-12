@@ -74,6 +74,9 @@ PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event)
     //context->window_width
     //context->window_height
     //TODO draw rectangle
+    if(event.type == sfEvtKeyPressed && event.key.code == sfKeyEscape) { 
+        return PAINT_STATE_IDLE; 
+    }
     if_click(window,event);
     //sfRenderWindow_drawRectangleShape();
     return PAINT_STATE_DRAW_RECTANGLE;
