@@ -62,7 +62,11 @@ void paint_context_destroy(PaintContext* self) {
 }
 
 PaintState paint_handle_event_on_idle(PaintContext* context,sfEvent event) {
-    return PAINT_STATE_DRAW_RECTANGLE;
+    if (event.type == sfEvtKeyPressed && event.key.code == sfKeyR) {
+         return PAINT_STATE_DRAW_RECTANGLE;
+     }else{
+         return PAINT_STATE_IDLE;
+    }
 }
 
 PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event) {
@@ -70,6 +74,8 @@ PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event)
     //context->window_width
     //context->window_height
     //TODO draw rectangle
+    if_click(window,event);
+    //sfRenderWindow_drawRectangleShape();
     return PAINT_STATE_DRAW_RECTANGLE;
 }
 
@@ -131,7 +137,7 @@ int fenetre()
         sfRenderWindow_display(window);
         while (sfRenderWindow_pollEvent(window, &event)) {
             repair(window, event);
-            if_click(window, event);
+            //if_click(window, event);
             paint_state = paint_handle_event(paint_state, paint_context, event);
         }
     }
