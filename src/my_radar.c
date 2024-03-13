@@ -100,9 +100,11 @@ PaintState  paint_handle_events_on_draw_rect(PaintContext* context,sfEvent event
         return PAINT_STATE_IDLE;
     }
     if_click(context->window,event);
-    sfRectangleShape *object = create_rectangle(560,580,50,50,sfBlue);
-    paint_context_draw_rect(context,object);
-    sfRectangleShape_destroy(object);
+    if(event.type==sfEvtMouseButtonPressed && event.mouseButton.button==sfMouseLeft) {
+        sfRectangleShape *object = create_rectangle(event.mouseButton.x,event.mouseButton.y,50,50,sfBlue);
+        paint_context_draw_rect(context,object);
+        sfRectangleShape_destroy(object);
+    }
     return PAINT_STATE_DRAW_RECTANGLE;
 }
 
