@@ -4,14 +4,10 @@
 ** File description:
 ** paint
 */
-
-#include "scene_management/steps/includes/game.h"
-#include "scene_management/steps/includes/menu.h"
-#include "scene_management/steps/includes/scene.h"
-#include "scene_management/steps/includes/settings.h"
-//#include <SFML/Graphics.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <SFML/Graphics.h>
 
 #define UNUSED(x) (void)(x)
 
@@ -44,52 +40,68 @@ typedef enum PaintState {
 
 typedef struct PaintContext {
     sfRenderWindow* window;
-    unsigned int window_width;
-    unsigned int window_height;
+    sfRenderTexture* buffer;
 } PaintContext;
 
 PaintContext* paint_context_create(sfRenderWindow* window) {
-    PaintContext* result = (PaintContext*) malloc(sizeof(PaintContext));
+    PaintContext* result = malloc(sizeof(PaintContext));
     result->window=window;
     sfVector2u size = sfRenderWindow_getSize(window);
-    result->window_width = size.x;
-    result->window_height = size.y;
+    result->buffer = sfRenderTexture_create(size.x, size.y,sfFalse);
+    sfRenderTexture_clear(result->buffer,sfTransparent);
     return result;
 }
+
 void paint_context_destroy(PaintContext* self) {
     if(self != NULL) {
         self->window=NULL;
-        self->window_width=0;
-        self->window_height=0;
+        sfRenderTexture_destroy(self->buffer);
+        self->buffer=NULL;
         free(self);
     }
 }
 
-PaintState paint_handle_event_on_idle(PaintContext* context,sfEvent event) {
-    UNUSED(context);
-    if (event.type == sfEvtKeyPressed && event.key.code == sfKeyR) {
-         return PAINT_STATE_DRAW_RECTANGLE;
-     }else{
-         return PAINT_STATE_IDLE;
-    }
+void paint_context_draw_rect(PaintContext* self, sfRectangleShape* shape) {
+    sfRenderTexture_drawRectangleShape(self->buffer,shape,NULL);
 }
 
-PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event) {
-    sfRenderWindow* window = context->window;
-    //context->window_width
-    //context->window_height
-    //TODO draw rectangle
-    if(event.type == sfEvtKeyPressed && event.key.code == sfKeyEscape) { 
-        return PAINT_STATE_IDLE; 
-    }
-    if_click(window,event);
+void paint_context_draw_on_window(PaintContext* self) {
+    sfRenderTexture_display(self->buffer);
+    sfSprite* sprite = sfSprite_create();
+    sfSprite_setTexture(sprite,sfRenderTexture_getTexture(self->buffer),sfTrue);
+    sfRenderWindow_drawSprite(self->window,sprite,NULL);
+    sfSprite_destroy(sprite);
+}
+
+static sfBool is_key_pressed(sfEvent event, sfKeyCode code) {
+    return  event.type == sfEvtKeyPressed && event.key.code == code;
+}
+
+PaintState paint_handle_events_on_idle(PaintContext* context,sfEvent event) {
+    UNUSED(context);
+    if (is_key_pressed( event,sfKeyR)) {
+         return PAINT_STATE_DRAW_RECTANGLE;
+     }
+    return PAINT_STATE_IDLE;
+}
+
+static sfRectangleShape* create_rectangle(int x,int y, int w, int h, sfColor fill_color) {
     sfRectangleShape *object = sfRectangleShape_create();
-    sfVector2f position = {560, 580}; 
+    sfVector2f position = {x,y};
     sfRectangleShape_setPosition(object, position);
-    sfRectangleShape_setSize(object, position);
-    sfRectangleShape_setFillColor(object,sfBlue);
-    sfRenderWindow_drawRectangleShape(window, object, NULL);
-    sfRenderWindow_display(window);
+    sfVector2f size = {w,h};
+    sfRectangleShape_setSize(object, size);
+    sfRectangleShape_setFillColor(object,fill_color);
+    return object;
+}
+PaintState  paint_handle_events_on_draw_rect(PaintContext* context,sfEvent event) {
+    //TODO draw rectangle
+    if(is_key_pressed(event,sfKeyEscape)) {
+        return PAINT_STATE_IDLE;
+    }
+    if_click(context->window,event);
+    sfRectangleShape *object = create_rectangle(560,580,50,50,sfBlue);
+    paint_context_draw_rect(context,object);
     sfRectangleShape_destroy(object);
     return PAINT_STATE_DRAW_RECTANGLE;
 }
@@ -97,11 +109,11 @@ PaintState  paint_handle_event_on_draw_rect(PaintContext* context,sfEvent event)
 PaintState paint_handle_event(PaintState state, PaintContext* context,sfEvent event) {
     switch (state) {
         case PAINT_STATE_IDLE:
-            return paint_handle_event_on_idle(context,event);
+            return paint_handle_events_on_idle(context,event);
         case PAINT_STATE_DRAW_RECTANGLE:
-            return paint_handle_event_on_draw_rect(context,event);
+            return paint_handle_events_on_draw_rect(context,event);
         default:
-            return paint_handle_event_on_idle(context,event);
+            return paint_handle_events_on_idle(context,event);
     }
 }
 //
@@ -137,18 +149,16 @@ void fenetre()
     sfSprite *sprite = sfSprite_create();
     sfVideoMode video_mode = {1920, 1080, 32};
     sfVector2f scale = {1, 1};
-    //event_handler current_handler = idle_state_handler;
 
-    window = sfRenderWindow_create(video_mode,
-    "#myradar", sfDefaultStyle, NULL);
+    window = sfRenderWindow_create(video_mode,"#myradar", sfDefaultStyle, NULL);
     sfSprite_setTexture(sprite, texture, sfTrue);
     sfSprite_setScale(sprite, scale);
 
     PaintState paint_state = PAINT_STATE_IDLE;
     PaintContext *paint_context =  paint_context_create(window);
-
     while (sfRenderWindow_isOpen(window)) {
         sfRenderWindow_drawSprite(window, sprite, NULL);
+        paint_context_draw_on_window(paint_context);
         sfRenderWindow_display(window);
         while (sfRenderWindow_pollEvent(window, &event)) {
             repair(window, event);
