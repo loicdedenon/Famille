@@ -9,7 +9,11 @@
 #include "scene_management/steps/includes/menu.h"
 #include "scene_management/steps/includes/scene.h"
 #include "scene_management/steps/includes/settings.h"
+//#include <SFML/Graphics.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#define UNUSED(x) (void)(x)
 
 void repair(sfRenderWindow* window, sfEvent event)
 {
@@ -18,18 +22,19 @@ void repair(sfRenderWindow* window, sfEvent event)
     }
 }
 
-static void if_click(sfRenderWindow* window, sfEvent event)
+static sfBool if_click(sfRenderWindow* window, sfEvent event)
 {
-    int i = 0;
+    sfBool clicked = sfFalse;
     sfVector2i mouse = sfMouse_getPositionRenderWindow(window);
 
     if (mouse.x >= 816 && mouse.x <= 1062) {
         if (mouse.y >= 526 && mouse.y <= 594)
-            i = 1;
+            clicked = sfTrue;
     }
     if (event.type == sfEvtMouseButtonPressed) {
         printf("x:,%d y: %d, button: %d\n", event.mouseButton.x, event.mouseButton.y, event.mouseButton.button);
     }
+    return clicked;
 }
 
 typedef enum PaintState {
@@ -61,6 +66,7 @@ void paint_context_destroy(PaintContext* self) {
 }
 
 PaintState paint_handle_event_on_idle(PaintContext* context,sfEvent event) {
+    UNUSED(context);
     if (event.type == sfEvtKeyPressed && event.key.code == sfKeyR) {
          return PAINT_STATE_DRAW_RECTANGLE;
      }else{

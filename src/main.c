@@ -10,5 +10,5 @@ void fenetre(void);
 int main(void)
 {
     fenetre();
-    return (0);
+    return 0;
 }

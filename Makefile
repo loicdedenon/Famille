@@ -5,20 +5,21 @@
 ## Makefile
 ##
 
-SRC =	$(wildcard *.c)
+SRC =	$(wildcard src/*.c)
 
 OBJ = $(SRC:.c=.o)
 
 NAME = exercice
 
-CFLAGS = -Wall -Wextra -g -lcsfml-graphics -lcsfml-window -lcsfml-system
+CFLAGS = -Wall -Wextra -g -lcsfml-graphics -lcsfml-window -lcsfml-system -Wno-deprecated-declarations
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	gcc $(OBJ) -o $(NAME) $(CFLAGS)
+
 clean:
-	rm -f *.o
+	rm -f src/*.o
 	rm -f vgcore.*
 	rm -f *~
 	rm -f *.log
