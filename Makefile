@@ -5,13 +5,13 @@
 ## Makefile
 ##
 
-SRC =	$(wildcard src/*.c)
+SRC :=	$(wildcard src/*.c)
 
-OBJ = $(SRC:.c=.o)
+OBJ := $(SRC:.c=.o)
 
-NAME = exercice
+NAME := exercice
 
-CFLAGS = -Wall -Wextra -g -lcsfml-graphics -lcsfml-window -lcsfml-system -Wno-deprecated-declarations
+CFLAGS := -Wall -Wextra -g -lcsfml-graphics -lcsfml-window -lcsfml-system
 
 all: $(NAME)
 
