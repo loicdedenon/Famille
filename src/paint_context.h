@@ -14,11 +14,12 @@
 typedef struct PaintContext {
  sfRenderWindow* window;
  sfRenderTexture* buffer;
+ sfRenderTexture* temp_buffer;
  sfVector2i p0;
+ sfBool dragging;
 } PaintContext;
 
 PaintContext* paint_context_create(sfRenderWindow* window);
 void paint_context_destroy(PaintContext* self);
-void paint_context_draw_rect(PaintContext* self, sfRectangleShape* shape);
 void paint_context_draw_on_window(PaintContext* self);
 #endif //PAINT_CONTEXT_H

@@ -4,15 +4,13 @@
  * @date 13/03/2024
  * @copyright Copyright (c) 2024 Eric Vantillard. All rights reserved.
  */
-
-#include "paint_context.h"
-
 #include <stdlib.h>
 
 #include <SFML/Graphics/RenderTexture.h>
 #include <SFML/Graphics/RenderWindow.h>
 
-#include "SFML/Graphics/Sprite.h"
+#include "paint_context.h"
+#include "sfml_utils.h"
 
 PaintContext *paint_context_create(sfRenderWindow *window) {
     PaintContext *result = malloc(sizeof(PaintContext));
@@ -20,7 +18,10 @@ PaintContext *paint_context_create(sfRenderWindow *window) {
     sfVector2u size = sfRenderWindow_getSize(window);
     result->buffer = sfRenderTexture_create(size.x, size.y,sfFalse);
     sfRenderTexture_clear(result->buffer, sfTransparent);
+    result->temp_buffer = sfRenderTexture_create(size.x, size.y,sfFalse);
+    sfRenderTexture_clear(result->temp_buffer, sfTransparent);
     result->p0 = (sfVector2i){0, 0};
+    result->dragging = sfFalse;
     return result;
 }
 
@@ -29,19 +30,15 @@ void paint_context_destroy(PaintContext *self) {
         self->window = NULL;
         sfRenderTexture_destroy(self->buffer);
         self->buffer = NULL;
+        sfRenderTexture_destroy(self->temp_buffer);
+        self->temp_buffer = NULL;
         self->p0 = (sfVector2i){0, 0};
+        self->dragging = sfFalse;
         free(self);
     }
 }
 
-void paint_context_draw_rect(PaintContext *self, sfRectangleShape *shape) {
-    sfRenderTexture_drawRectangleShape(self->buffer, shape,NULL);
-}
-
 void paint_context_draw_on_window(PaintContext *self) {
-    sfRenderTexture_display(self->buffer);
-    sfSprite *sprite = sfSprite_create();
-    sfSprite_setTexture(sprite, sfRenderTexture_getTexture(self->buffer),sfTrue);
-    sfRenderWindow_drawSprite(self->window, sprite,NULL);
-    sfSprite_destroy(sprite);
+    sfRenderWindow_drawRenderedTexture(self->window, self->buffer);
+    sfRenderWindow_drawRenderedTexture(self->window, self->temp_buffer);
 }

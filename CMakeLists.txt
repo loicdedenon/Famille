@@ -34,7 +34,8 @@ add_executable(exercice src/main.c src/my_paint.c
         src/paint_state.c
         src/paint_state.h
         src/sfml_utils.c
-        src/sfml_utils.h)
+        src/sfml_utils.h
+        src/utils.h)
 
 # Be pedantic !
 if(MSVC)
