@@ -28,13 +28,19 @@ FetchContent_Declare(CSFML
 
 FetchContent_MakeAvailable(SFML CSFML)
 
-add_executable(exercice src/main.c src/my_radar.c)
+add_executable(exercice src/main.c src/my_paint.c
+        src/paint_context.c
+        src/paint_context.h
+        src/paint_state.c
+        src/paint_state.h
+        src/sfml_utils.c
+        src/sfml_utils.h)
 
 # Be pedantic !
 if(MSVC)
     target_compile_options(exercice PRIVATE /W4 /WX)
 else()
-    target_compile_options(exercice PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_compile_options(exercice PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-variable)
 endif()
 
 target_link_libraries(exercice PRIVATE csfml-graphics csfml-window csfml-system sfml-graphics sfml-window sfml-system)
