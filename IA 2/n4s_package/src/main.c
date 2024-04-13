@@ -13,7 +13,10 @@ int main(int ac, char **av)
         return 84;
     start();
     forward(0.5);
-    info();
+    LidarData *result = malloc(sizeof(LidarData));
+    info(result);
+    print_lidar_data(result);
+    free(result);
     sleep(5);
     return stop();
 }

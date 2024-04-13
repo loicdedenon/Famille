@@ -52,7 +52,12 @@ typedef struct ResponseHeader{
     char *data; 
 }ResponseHeader;
 int send_command(char *command, ResponseHeader *response);
+typedef struct LidarData{
+    float values[32];
+} LidarData;
+int parse_lidar_data(char* raw_data,LidarData* result);
+void print_lidar_data(LidarData* data);
 int forward(float horsepower);
 int start(void);
 int stop(void);
-int info(void);
+int info(LidarData* result);

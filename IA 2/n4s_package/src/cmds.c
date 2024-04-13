@@ -7,6 +7,36 @@
 
 #include "../includes/my.h"
 
+int parse_lidar_data(char* raw_data,LidarData* result){
+    if(result==NULL){
+        return -1;
+    }
+    char *token, *lasts, *endptr;
+    char *str=raw_data;
+    for (int i = 0; i < 32; ++i) {
+        token=strtok_r(str,":",&lasts);
+        str=NULL;
+        if(token==NULL){
+            fprintf(stderr,"error missing lidar data %d in %s\n",i,raw_data);
+            return -1;
+        }
+        result->values[i]=strtof(token,&endptr);
+        if(token==endptr){
+            fprintf(stderr,"error parsing lidar data %d in %s\n",i,token);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+void print_lidar_data(LidarData* data){
+    fprintf(stderr,"LidarData{");
+    for (int i = 0; i < 32; ++i) {
+        fprintf(stderr,"%.2f ",data->values[i]);
+    }
+    fprintf(stderr,"}\n");
+}
+
 int parse_response_header(char* raw_response,ResponseHeader* result) {
     if(result==NULL){
         return -1;
